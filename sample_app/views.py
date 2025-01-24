@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from reportlab.platypus import Image
 from sample_app.utils import (
     Smart_Path_Delivery_report_pdf,
     header, 
     footer, 
     watermark
 )
+from reportlab.lib.units import cm
 
 def generate_pdf_view(request):
     """
@@ -14,22 +15,23 @@ def generate_pdf_view(request):
     """
 
     table_data = [
-        ["Vehicle No", "Capacity", "Vehicle Path", "Carrying Weight", "Remaining Weight", "Total Route Distance"],
-        ["VH008", "1000", "ORD010 → ORD015 → ORD024 → ORD008", "999", "1", "646.24 km"],
-        ["VH005", "400", "ORD003", "400", "0", "84.06 km"],
-        ["VH006", "500", "ORD015 → ORD014 → ORD025", "420", "80", "210.16 km"],
-        ["VH004", "600", "ORD001", "600", "0", "142.38 km"],
-        ["VH001", "800", "ORD012 → ORD021 → ORD019", "800", "0", "801.60 km"],
-        ["VH003", "1000", "ORD009 → ORD016 →ORD005", "990", "10", "323.75 km"],
-        ["VH002", "1200", "ORD004 → ORD013 → ORD027", "1160", "40", "648.08 km"],
-        ["VH007", "800", "ORD011 → ORD007", "760", "40", "114.04 km"]
+        ["Name", "Sumeet", "Pratik", "Vikas", "Om"],
+        ["Age", "21", "23", "23", "24"],
+        [
+            "Image", 
+            Image(r"C:\Users\mypc\Downloads\Image5.jpg", width=2*cm, height=2*cm),
+            Image(r"C:\Users\mypc\Downloads\Image6.jpg", width=2*cm, height=2*cm),
+            Image(r"C:\Users\mypc\Downloads\Image7.jpg", width=2*cm, height=2*cm),
+            Image(r"C:\Users\mypc\Downloads\Image8.jpg", width=2*cm, height=2*cm)
+        ],
     ]
-    
+
+
     images_data = {
-        "image1" : "C:\\Users\\mypc\\Pictures\\Screenshots\\Screenshot 2025-01-17 104955.png",
-        "image2" : "C:\\Users\\mypc\\Pictures\\Screenshots\\Screenshot 2025-01-17 004504.png",
-        "image3" : "C:\\Users\\mypc\\Pictures\\Screenshots\\Screenshot 2025-01-16 170815.png",
-        "image4" : "C:\\Users\\mypc\\Pictures\\Screenshots\\Screenshot 2025-01-16 170718.png",
+        "image1" : r"C:\Users\mypc\Downloads\Image1.jpg",
+        "image2" : r"C:\Users\mypc\Downloads\Image2.jpg",
+        "image3" : r"C:\Users\mypc\Downloads\Image3.jpg",
+        "image4" : r"C:\Users\mypc\Downloads\Image4.jpg",
     }
 
     first_paragraph = (
@@ -71,3 +73,4 @@ def generate_pdf_view(request):
 
     return HttpResponse("PDF Generated")
 
+    

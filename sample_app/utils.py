@@ -47,6 +47,7 @@ def footer(canvas, doc, footer_text, left_footer_text):
 
     # Centered footer text
     text_width = canvas.stringWidth(footer_text, "Helvetica", 10)
+    
     # Draws the footer text centered at the bottom of the page, 0.7 cm above the bottom edge.
     canvas.drawString((A4[0] - text_width) / 2, 0.7 * cm, footer_text)
 
@@ -87,7 +88,6 @@ def watermark(canvas, doc, watermark_text):
             canvas.restoreState()  # Restore canvas to previous state
 
     canvas.restoreState() # Restore initial canvas state
-
 
 
 def Smart_Path_Delivery_report_pdf(
@@ -185,7 +185,7 @@ def Smart_Path_Delivery_report_pdf(
     # Creating the table with styling
     table = Table(data, colWidths=col_widths)
     style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row background
+        ('BACKGROUND', (0, 0), (0, -1), colors.grey),  # Header row background
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Font for entire table
         ('FONTSIZE', (0, 0), (-1, -1), 8),  # Font size
@@ -200,14 +200,14 @@ def Smart_Path_Delivery_report_pdf(
 
     # Loop through the dictionary and create Image objects for each file path
     for image_key, image_path in images_data.items():
-        images.append(Image(image_path, width=6*cm, height=4*cm))
+        images.append(Image(image_path, width=4*cm, height=4*cm))
 
     # Arranging images in a table
     image_data = [
         [images[0], images[1]],
         [images[2], images[3]],
     ]  
-    image_table = Table(image_data, colWidths=9 * cm, rowHeights=6 * cm)
+    image_table = Table(image_data, colWidths= 5 * cm, rowHeights = 5 * cm)
 
     # Final paragraph
     paragraph2 = Paragraph(
@@ -224,6 +224,7 @@ def Smart_Path_Delivery_report_pdf(
         PageBreak(),
         image_table,
         PageBreak(),
+        Spacer(1, 15 * cm),
         paragraph2
     ]
 
