@@ -61,6 +61,7 @@ def footer(canvas, doc, footer_text, left_footer_text):
 
     canvas.restoreState()
 
+
 def watermark(canvas, doc, watermark_text):
     """Adds a dynamic watermark."""
     canvas.saveState()  # Save the current canvas state
@@ -84,6 +85,7 @@ def watermark(canvas, doc, watermark_text):
             canvas.restoreState()  # Restore canvas to previous state
 
     canvas.restoreState() # Restore initial canvas state
+
 
 def Smart_Path_Delivery_report_pdf(
     header_data, footer_data, watermark_data, first_paragraph, table_data, images_data, second_paragraph
@@ -189,11 +191,13 @@ def Smart_Path_Delivery_report_pdf(
     """
     max_lengths = [max(len(str(row[col])) for row in processed_data) for col in range(len(processed_data[0]))]
 
+
     """
     Sum up all the maximum lengths across columns to calculate the total length required for all columns,
     This helps in determining how to proportionally allocate the space (usable width) to each column.   
     """
     total_length = sum(max_lengths)
+
 
     """
     Calculate the relative width of each column by using a proportional distribution of the usable width,
@@ -252,6 +256,7 @@ def Smart_Path_Delivery_report_pdf(
 
     # Building the document
     doc.build(elements)
+
 
 if __name__ == '__main__':
     Smart_Path_Delivery_report_pdf()
