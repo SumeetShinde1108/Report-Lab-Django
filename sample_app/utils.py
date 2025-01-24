@@ -226,7 +226,7 @@ def Smart_Path_Delivery_report_pdf(
     # Adding elements to the document
     elements = [
         paragraph1,
-        Spacer(1, 15 * cm),
+        Spacer(1, 2 * cm),
         table,
         Spacer(1, 0.5 * cm),
         PageBreak(),
