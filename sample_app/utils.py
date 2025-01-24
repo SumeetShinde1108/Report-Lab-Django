@@ -15,6 +15,7 @@ from reportlab.lib.colors import Color
 from reportlab.platypus.flowables import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+
 def header(canvas, doc, header_text, left_logo, right_logo):
     """Draws the header dynamically with passed data."""
     canvas.saveState()
@@ -37,6 +38,7 @@ def header(canvas, doc, header_text, left_logo, right_logo):
     right_logo_img.drawOn(canvas, A4[0] - 2.5 * cm, A4[1] - 1.6 * cm)
 
     canvas.restoreState()
+
 
 def footer(canvas, doc, footer_text, left_footer_text):
     """Draws the footer dynamically with passed data."""
@@ -116,6 +118,7 @@ def Smart_Path_Delivery_report_pdf(
     # Create the frame
     frame = Frame(left_margin, bottom_margin, usable_width, usable_height, showBoundary=5)
     
+
     def add_page_decorations(canvas, doc):
         """Adds the header and footer to each page."""
         # Extract header data
@@ -169,8 +172,10 @@ def Smart_Path_Delivery_report_pdf(
 
     # Process the table data
     processed_data = []
+    
     for row in table_data:
         processed_row = []
+    
         for cell in row:
             if isinstance(cell, Image):
                 cell.drawWidth = 1.5* cm  # Limit image width
