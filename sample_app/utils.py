@@ -15,7 +15,6 @@ from reportlab.lib.colors import Color
 from reportlab.platypus.flowables import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-
 def header(canvas, doc, header_text, left_logo, right_logo):
     """Draws the header dynamically with passed data."""
     canvas.saveState()
@@ -25,7 +24,6 @@ def header(canvas, doc, header_text, left_logo, right_logo):
     text_width = canvas.stringWidth(header_text, "Helvetica", 10)
     # Draws centered text 0.7 cm below the top edge of the A4 page.    
     canvas.drawString((A4[0] - text_width) / 2, A4[1] - 0.7 * cm, header_text)
-
 
     # Left-aligned logo
     left_logo_img = Image(left_logo, width=4 * cm, height=1.5 * cm)
@@ -38,7 +36,6 @@ def header(canvas, doc, header_text, left_logo, right_logo):
     right_logo_img.drawOn(canvas, A4[0] - 1.7 * cm, A4[1] - 1.4 * cm)
 
     canvas.restoreState()
-
 
 def footer(canvas, doc, footer_text, left_footer_text):
     """Draws the footer dynamically with passed data."""
@@ -53,7 +50,6 @@ def footer(canvas, doc, footer_text, left_footer_text):
 
     # Left-aligned footer text
     # Draws the left footer text ("TSP") 0.7 cm above the bottom-left corner of the page.
-    
     canvas.drawString(1 * cm, 0.7 * cm, left_footer_text)
 
     # Right-aligned page number
@@ -63,7 +59,6 @@ def footer(canvas, doc, footer_text, left_footer_text):
     canvas.drawString(A4[0] - 2 * cm, 0.7 * cm, page_number)
 
     canvas.restoreState()
-
 
 def watermark(canvas, doc, watermark_text):
     """Adds a dynamic watermark."""
@@ -88,7 +83,6 @@ def watermark(canvas, doc, watermark_text):
             canvas.restoreState()  # Restore canvas to previous state
 
     canvas.restoreState() # Restore initial canvas state
-
 
 def Smart_Path_Delivery_report_pdf(
     header_data, footer_data, watermark_data, first_paragraph, table_data, images_data, second_paragraph
@@ -140,7 +134,6 @@ def Smart_Path_Delivery_report_pdf(
         watermark_text = watermark_data.get("watermark_text", "")
         watermark(canvas, doc, watermark_text)
 
-
     # Adding the page template
     template = PageTemplate(id="report_template", frames=frame, onPage=add_page_decorations)
     doc.addPageTemplates([template])
@@ -159,7 +152,22 @@ def Smart_Path_Delivery_report_pdf(
         paragraph_style
     )
 
-    data = table_data #data for table  
+    styles = getSampleStyleSheet()
+    
+    processed_data = []
+    for row in table_data:
+        processed_row = []
+        for cell in row:
+            if isinstance(cell, Image):
+                cell.drawWidth = 2 * cm  # Limit image width
+                cell.drawHeight = 2 * cm  # Limit image height
+                processed_row.append(cell)
+            else:
+                # Wrap text inside the cell
+                para = Paragraph(str(cell), paragraph_style)
+                processed_row.append(para)
+        processed_data.append(processed_row)
+
 
     # Define the usable width for the table (in centimeters)
     usable_width = 17 * cm
@@ -168,7 +176,7 @@ def Smart_Path_Delivery_report_pdf(
     Calculate the maximum length for each column by finding the longest string length in each column,
     This helps to determine how much space each column should occupy in the final layout.
     """
-    max_lengths = [max(len(str(row[col])) for row in data) for col in range(len(data[0]))]
+    max_lengths = [max(len(str(row[col])) for row in processed_data) for col in range(len(processed_data[0]))]
     
     """
     Sum up all the maximum lengths across columns to calculate the total length required for all columns,
@@ -183,13 +191,13 @@ def Smart_Path_Delivery_report_pdf(
     col_widths = [(usable_width * (length / total_length)) for length in max_lengths]
     
     # Creating the table with styling
-    table = Table(data, colWidths=col_widths)
+    table = Table(processed_data, colWidths=col_widths)
     style = TableStyle([
         ('BACKGROUND', (0, 0), (0, -1), colors.grey),  # Header row background
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Font for entire table
         ('FONTSIZE', (0, 0), (-1, -1), 8),  # Font size
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center alignm=ent
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center alignment
         ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Gridlines
         ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),  # Enable word wrapping for all cells
     ])
@@ -207,7 +215,7 @@ def Smart_Path_Delivery_report_pdf(
         [images[0], images[1]],
         [images[2], images[3]],
     ]  
-    image_table = Table(image_data, colWidths= 5 * cm, rowHeights = 5 * cm)
+    image_table = Table(image_data, colWidths=5 * cm, rowHeights=5 * cm)
 
     # Final paragraph
     paragraph2 = Paragraph(
