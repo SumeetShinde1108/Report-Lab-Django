@@ -63,7 +63,6 @@ def generate_pdf_view(request):
         )
 
     second_paragraph = ("Hi My name is Sumeet Shinde, Welcome to Smart_Path_Delivery Report")
-    
 
     header_data = {
         "header_text" : "FarmSetu Technologies",
