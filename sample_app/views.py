@@ -14,18 +14,29 @@ def generate_pdf_view(request):
     This function passes the data to function which generates the pdf by using this data dynamically
     """
 
+    
     table_data = [
-        ["Name", "Sumeet", "Pratik", "Vikas", "Om"],
-        ["Age", "21", "23", "23", "24"],
+        ["Name", "Sumeet", "Pratik", "Vikas", "Om", "Viki"],
+        ["Age", "21", "23", "23", "24", "33"],
+        
+        [
+            "Bio",
+            " Calculate the relative width of each column by using a proportional distribution of the usable width, Each column gets a portion.", 
+            "Sum up all the maximum lengths across columns to calculate the total length required for all columns, This helps in determining how to proportionally allocate the space to each column.",
+            "Calculate the relative width of each column by using a proportional distribution of the usable width, Each column gets a portion of the usable width",
+            "Hi I'm Om , Its gonna be a good day",
+            "Hey Everyone "
+        ],
+
         [
             "Image", 
             Image(r"C:\Users\mypc\Downloads\Image5.jpg", width=2*cm, height=2*cm),
             Image(r"C:\Users\mypc\Downloads\Image6.jpg", width=2*cm, height=2*cm),
             Image(r"C:\Users\mypc\Downloads\Image7.jpg", width=2*cm, height=2*cm),
+            Image(r"C:\Users\mypc\Downloads\Image8.jpg", width=2*cm, height=2*cm),
             Image(r"C:\Users\mypc\Downloads\Image8.jpg", width=2*cm, height=2*cm)
         ],
     ]
-
 
     images_data = {
         "image1" : r"C:\Users\mypc\Downloads\Image1.jpg",

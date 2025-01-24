@@ -27,13 +27,14 @@ def header(canvas, doc, header_text, left_logo, right_logo):
 
     # Left-aligned logo
     left_logo_img = Image(left_logo, width=4 * cm, height=1.5 * cm)
-    # Draws the logo image 1.6 cm below the top edge and 1 cm from the left edge of the A4 page.
-    left_logo_img.drawOn(canvas, 1 * cm, A4[1] - 1.6 * cm)
+    # Draws the logo image 1.6 cm below the top edge and 0.8 cm from the left edge of the A4 page.
+    left_logo_img.drawOn(canvas, 0.8 * cm, A4[1] - 1.6 * cm)
 
     # Right-aligned logo
     right_logo_img = Image(right_logo, width=1.3 * cm, height=1.3 * cm)
-    # Draws the logo image 1.4 cm below the top edge and 1.7 cm from the right edge of the A4 page.
-    right_logo_img.drawOn(canvas, A4[0] - 1.7 * cm, A4[1] - 1.4 * cm)
+    
+    # Draws the logo image 1.6 cm below the top edge and 2.5 cm from the right edge of the A4 page.
+    right_logo_img.drawOn(canvas, A4[0] - 2.5 * cm, A4[1] - 1.6 * cm)
 
     canvas.restoreState()
 
@@ -153,14 +154,25 @@ def Smart_Path_Delivery_report_pdf(
     )
 
     styles = getSampleStyleSheet()
-    
+
+
+    # Paragraph style
+    styles = getSampleStyleSheet()
+    paragraph_style = styles['Normal']
+    paragraph_style.firstLineIndent = 0  # No excessive indent
+    paragraph_style.leftIndent = 0       # No left indent
+    paragraph_style.fontSize = 8         # Font size for better readability
+    paragraph_style.wordWrap = 'LTR'     # Word wrapping
+    paragraph_style.alignment = 0        # Left alignment
+
+    # Process the table data
     processed_data = []
     for row in table_data:
         processed_row = []
         for cell in row:
             if isinstance(cell, Image):
-                cell.drawWidth = 2 * cm  # Limit image width
-                cell.drawHeight = 2 * cm  # Limit image height
+                cell.drawWidth = 1.5* cm  # Limit image width
+                cell.drawHeight = 1.5 * cm  # Limit image height
                 processed_row.append(cell)
             else:
                 # Wrap text inside the cell
@@ -168,41 +180,43 @@ def Smart_Path_Delivery_report_pdf(
                 processed_row.append(para)
         processed_data.append(processed_row)
 
+    # Define the usable width for the table (A4 width minus margins)
+    usable_width = A4[0] - (2 * cm + 2 * cm)  # Left and right margins
 
-    # Define the usable width for the table (in centimeters)
-    usable_width = 17 * cm
-    
     """
     Calculate the maximum length for each column by finding the longest string length in each column,
     This helps to determine how much space each column should occupy in the final layout.
     """
     max_lengths = [max(len(str(row[col])) for row in processed_data) for col in range(len(processed_data[0]))]
-    
+
     """
     Sum up all the maximum lengths across columns to calculate the total length required for all columns,
-    This helps in determining how to proportionally allocate the space (usable width) to each column.
+    This helps in determining how to proportionally allocate the space (usable width) to each column.   
     """
     total_length = sum(max_lengths)
-    
+
     """
     Calculate the relative width of each column by using a proportional distribution of the usable width,
     Each column gets a portion of the usable width based on the relative length of the content in that column.
-    """    
+    """
     col_widths = [(usable_width * (length / total_length)) for length in max_lengths]
-    
-    # Creating the table with styling
+
+    # Create the table with proportional column widths
     table = Table(processed_data, colWidths=col_widths)
+
+    # Table styling
     style = TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.grey),  # Header row background
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row background
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Font for entire table
         ('FONTSIZE', (0, 0), (-1, -1), 8),  # Font size
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center alignment
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Vertical alignment
         ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Gridlines
-        ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),  # Enable word wrapping for all cells
+        ('WORDWRAP', (0, 0), (-1, -1), 'CJK'),  # Enable word wrapping for all cells    
     ])
     table.setStyle(style)
-
+    
     # Images for visualization
     images = []
 
