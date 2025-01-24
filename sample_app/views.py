@@ -13,7 +13,7 @@ def generate_pdf_view(request):
     This function passes the data to function which generates the pdf by using this data dynamically
     """
 
-    data = [
+    table_data = [
         ["Vehicle No", "Capacity", "Vehicle Path", "Carrying Weight", "Remaining Weight", "Total Route Distance"],
         ["VH008", "1000", "ORD010 → ORD015 → ORD024 → ORD008", "999", "1", "646.24 km"],
         ["VH005", "400", "ORD003", "400", "0", "84.06 km"],
@@ -51,17 +51,23 @@ def generate_pdf_view(request):
 
     second_paragraph = ("Hi My name is Sumeet Shinde, Welcome to Smart_Path_Delivery Report")
     
-    '''
+
     header_data = {
         "header_text" : "FarmSetu Technologies",
         "left_logo" : "C:\\Users\\mypc\\Downloads\\Farmsetu-Logo-full.png",
         "right_logo" : "C:\\Users\\mypc\\Downloads\\Farmsetu.webp"
     }
     
-    header(header_data)
-    '''
-    
-    Smart_Path_Delivery_report_pdf(first_paragraph, data, images_data, second_paragraph)
+    footer_data = {
+        "center_footer_text": " FarmSetu",
+        "Left_footer_text": "SPDS"
+    }
+
+    watermark_data = {
+        "watermark_text": "FARMSETU"
+    }
+
+    Smart_Path_Delivery_report_pdf(header_data, footer_data, watermark_data, first_paragraph, table_data, images_data, second_paragraph)
 
     return HttpResponse("PDF Generated")
 

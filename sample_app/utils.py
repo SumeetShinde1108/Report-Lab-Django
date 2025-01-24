@@ -16,77 +16,65 @@ from reportlab.platypus.flowables import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 
-def header(canvas, doc):
-    """Draws the header on each page with a title, left-aligned text, and logos on both sides."""
+def header(canvas, doc, header_text, left_logo, right_logo):
+    """Draws the header dynamically with passed data."""
     canvas.saveState()
     canvas.setFont("Helvetica", 10)
 
-    # Centered header title
-    header_text = "FarmSetu Technologies"
+    # Centered header text
     text_width = canvas.stringWidth(header_text, "Helvetica", 10)
-    
-    # Draws centered text 0.7 cm below the top edge of the A4 page.
+    # Draws centered text 0.7 cm below the top edge of the A4 page.    
     canvas.drawString((A4[0] - text_width) / 2, A4[1] - 0.7 * cm, header_text)
 
+
     # Left-aligned logo
-    logo_path = "C:\\Users\\mypc\\Downloads\\Farmsetu-Logo-full.png"
-    logo = Image(logo_path, width=4 * cm, height=1.5 * cm)
-    
+    left_logo_img = Image(left_logo, width=4 * cm, height=1.5 * cm)
     # Draws the logo image 1.6 cm below the top edge and 1 cm from the left edge of the A4 page.
-    logo.drawOn(canvas, 1 * cm, A4[1] - 1.6 * cm)
+    left_logo_img.drawOn(canvas, 1 * cm, A4[1] - 1.6 * cm)
 
     # Right-aligned logo
-    logo_path = "C:\\Users\\mypc\\Downloads\\Farmsetu.webp" 
-    logo = Image(logo_path, width=1.3 * cm, height=1.3 * cm)
-    
+    right_logo_img = Image(right_logo, width=1.3 * cm, height=1.3 * cm)
     # Draws the logo image 1.4 cm below the top edge and 1.7 cm from the right edge of the A4 page.
-    logo.drawOn(canvas, A4[0] - 1.7 * cm, A4[1] - 1.4 * cm)
+    right_logo_img.drawOn(canvas, A4[0] - 1.7 * cm, A4[1] - 1.4 * cm)
 
     canvas.restoreState()
 
 
-def footer(canvas, doc):
-    """Draws the footer on each page with a title, left-aligned text, and the page number."""
+def footer(canvas, doc, footer_text, left_footer_text):
+    """Draws the footer dynamically with passed data."""
     canvas.saveState()
     canvas.setFont("Helvetica", 10)
 
     # Centered footer text
-    footer_text = "FarmSetu"
-    footer_width = canvas.stringWidth(footer_text, "Helvetica", 10)
-
+    text_width = canvas.stringWidth(footer_text, "Helvetica", 10)
     # Draws the footer text centered at the bottom of the page, 0.7 cm above the bottom edge.
-    canvas.drawString((A4[0] - footer_width) / 2, 0.7 * cm, footer_text)
+    canvas.drawString((A4[0] - text_width) / 2, 0.7 * cm, footer_text)
 
     # Left-aligned footer text
-    left_footer_text = "TSP"
-
     # Draws the left footer text ("TSP") 0.7 cm above the bottom-left corner of the page.
+    
     canvas.drawString(1 * cm, 0.7 * cm, left_footer_text)
 
     # Right-aligned page number
-    page_number = f"{doc.page}"
+    page_number = f"Page {doc.page}"
 
     # Draws the page number ("page_number") 0.7 cm above the bottom-right corner of the page.
-    canvas.drawString(A4[0] - 1 * cm, 0.7 * cm, page_number)
+    canvas.drawString(A4[0] - 2 * cm, 0.7 * cm, page_number)
+
     canvas.restoreState()
 
 
-def watermark(canvas, doc):
-    """
-    Adds a visually appealing watermark to each page.
-    """
+def watermark(canvas, doc, watermark_text):
+    """Adds a dynamic watermark."""
     canvas.saveState()  # Save the current canvas state
-    canvas.setFont("Helvetica-Bold", 25)  # Set font and size
-    canvas.setFillColor(Color(0.5, 0.5, 0.5, alpha=0.3))  # Set semi-transparent gray color
-    watermark_text = "FARMSETU" 
-    
-    # Define spacing between watermarks
+    canvas.setFont("Helvetica-Bold", 25) # Set font and size
+    canvas.setFillColor(Color(0.5, 0.5, 0.5, alpha=0.2)) # Set semi-transparent gray color
+
+    # Spacing and offset for repeating watermark
     h_space = 200
     v_space = 150
-
-    # Calculate offsets to center the grid 
-    x_offset = (A4[0] % h_space) / 2 
-    y_offset = (A4[1] % v_space) / 2 
+    x_offset = (A4[0] % h_space) / 2
+    y_offset = (A4[1] % v_space) / 2
 
     # Loop through vertical positions 
     for y in range(-v_space, int(A4[1]) + v_space, v_space): 
@@ -98,18 +86,12 @@ def watermark(canvas, doc):
             canvas.drawCentredString(0, 0, watermark_text)  # Draw centered watermark
             canvas.restoreState()  # Restore canvas to previous state
 
-    canvas.restoreState()  # Restore initial canvas state
+    canvas.restoreState() # Restore initial canvas state
 
-    
-def add_page_decorations(canvas, doc):
-    """Adds the header and footer to each page."""
-    header(canvas, doc)
-    footer(canvas, doc)
-    watermark(canvas, doc)
 
 
 def Smart_Path_Delivery_report_pdf(
-    first_paragraph, data, images_data, second_paragraph
+    header_data, footer_data, watermark_data, first_paragraph, table_data, images_data, second_paragraph
 ):
     """
     Generates a PDF report for the Smart Path Delivery system with text, tables, images, and page decorations.
@@ -137,6 +119,28 @@ def Smart_Path_Delivery_report_pdf(
     # Create the frame
     frame = Frame(left_margin, bottom_margin, usable_width, usable_height, showBoundary=5)
     
+    def add_page_decorations(canvas, doc):
+        """Adds the header and footer to each page."""
+        # Extract header data
+        header_text = header_data.get("header_text", "")
+        left_logo = header_data.get("left_logo", "")
+        right_logo = header_data.get("right_logo", "")
+
+        # Add header
+        header(canvas, doc, header_text, left_logo, right_logo)
+
+        # Extract footer data
+        footer_text = footer_data.get("center_footer_text", "")
+        left_footer_text = footer_data.get("Left_footer_text", "")
+
+        # Add footer
+        footer(canvas, doc, footer_text, left_footer_text)
+
+        # Add watermark
+        watermark_text = watermark_data.get("watermark_text", "")
+        watermark(canvas, doc, watermark_text)
+
+
     # Adding the page template
     template = PageTemplate(id="report_template", frames=frame, onPage=add_page_decorations)
     doc.addPageTemplates([template])
@@ -155,7 +159,7 @@ def Smart_Path_Delivery_report_pdf(
         paragraph_style
     )
 
-    table_data = data #data for table  
+    data = table_data #data for table  
 
     # Define the usable width for the table (in centimeters)
     usable_width = 17 * cm
@@ -164,7 +168,7 @@ def Smart_Path_Delivery_report_pdf(
     Calculate the maximum length for each column by finding the longest string length in each column,
     This helps to determine how much space each column should occupy in the final layout.
     """
-    max_lengths = [max(len(str(row[col])) for row in table_data) for col in range(len(table_data[0]))]
+    max_lengths = [max(len(str(row[col])) for row in data) for col in range(len(data[0]))]
     
     """
     Sum up all the maximum lengths across columns to calculate the total length required for all columns,
@@ -179,7 +183,7 @@ def Smart_Path_Delivery_report_pdf(
     col_widths = [(usable_width * (length / total_length)) for length in max_lengths]
     
     # Creating the table with styling
-    table = Table(table_data, colWidths=col_widths)
+    table = Table(data, colWidths=col_widths)
     style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Header row background
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),  # Header text color
